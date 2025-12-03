@@ -256,7 +256,7 @@ def plot_results(IXT, ITY, acc):
 
 
 def sweep_bottleneck_dims(X_train, y_train, X_test, y_test,
-                          widths=(1, 2, 4, 8), epochs=30, n_bins=15, lr=1e-3):
+                          widths=(10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 700, 800), epochs=30, n_bins=20, lr=1e-3):
     """
     Train separate networks with different bottleneck widths,
     measure final compression and accuracy.
@@ -317,19 +317,23 @@ def plot_width_sweep(results):
     widths = [r["width"] for r in results]
     IXT = [r["IXT"] for r in results]
     ITY = [r["ITY"] for r in results]
+
+    IXT_per_unit = [ix / w for ix, w in zip(IXT, widths)]
+    IXY_per_unit = [iy / w for iy, w in zip(ITY, widths)]
+
     train_acc = [r["train_acc"] for r in results]
     test_acc = [r["test_acc"] for r in results]
 
     plt.figure(figsize=(10, 3))
 
     plt.subplot(1, 3, 1)
-    plt.plot(widths, IXT, "o-")
+    plt.plot(widths, IXT_per_unit, "o-")
     plt.xlabel("Bottleneck dim")
     plt.ylabel("≈ I(X;T)")
     plt.title("Compression vs width")
 
     plt.subplot(1, 3, 2)
-    plt.plot(widths, ITY, "o-")
+    plt.plot(widths, IXY_per_unit, "o-")
     plt.xlabel("Bottleneck dim")
     plt.ylabel("≈ I(T;Y)")
     plt.title("Predictive info vs width")
@@ -373,9 +377,9 @@ if __name__ == "__main__":
     # 2) Sweep bottleneck sizes
     results = sweep_bottleneck_dims(
         X_train, y_train, X_test, y_test,
-        widths=(1, 2, 4, 8),
+        widths=(10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 700, 800),
         epochs=30,
-        n_bins=15,
+        n_bins=20,
         lr=1e-3,
     )
     plot_width_sweep(results)
